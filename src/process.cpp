@@ -58,7 +58,7 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const {
     //Determining precedence based on process memory utilization
-    return this->CpuUtilization() < a.CpuUtilization();
+    return this->CpuUtilization() > a.CpuUtilization();
 }
 
 void Process::Pid(int pid) {
