@@ -58,10 +58,7 @@ long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
 // REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const {
     //Determining precedence based on process memory utilization
-    int process1 = std::stoi(this->Ram());
-    int process2 = std::stoi(a.Ram());
-    if(process1 < process2) { return true; }
-    return false;
+    return this->CpuUtilization() < a.CpuUtilization();
 }
 
 void Process::Pid(int pid) {
