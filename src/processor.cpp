@@ -4,7 +4,6 @@
 
 #include "linux_parser.h"
 
-// TODO: Return the aggregate CPU utilization
 float Processor::Utilization() {
     std::vector<std::string> info = LinuxParser::CpuUtilization();
 

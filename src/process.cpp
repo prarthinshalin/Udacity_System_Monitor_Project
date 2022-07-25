@@ -11,14 +11,11 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// TODO: Return this process's ID
 int Process::Pid() { return pid_; }
 
-// TODO: Return this process's CPU utilization
 float Process::CpuUtilization() const {
     std::string line, number;
     float utime, stime, cutime, cstime, starttime;
-    long uptime = LinuxParser::UpTime();
 
     std::ifstream instream(LinuxParser::kProcDirectory + std::to_string(pid_) + LinuxParser::kStatFilename);
     if(instream.is_open()) {
@@ -36,26 +33,27 @@ float Process::CpuUtilization() const {
 
         //Calculation
         float total_time = utime + stime + cutime + cstime;
-        float seconds = uptime - (starttime / sysconf(_SC_CLK_TCK));
+        float seconds = UpTime() - (starttime / sysconf(_SC_CLK_TCK));
         return (total_time / sysconf(_SC_CLK_TCK)) / seconds;
     }
     return 0.0;
 }
 
-// TODO: Return the command that generated this process
-string Process::Command() { return LinuxParser::Command(pid_); }
+string Process::Command() {
+    std::string trimmed_cmd;
+    std::string cmd = LinuxParser::Command(pid_); 
+    if(cmd.length() > 50) {
+        trimmed_cmd = cmd.substr(0, 49) + "...";
+    } else { trimmed_cmd = cmd; }
+    return trimmed_cmd;
+}
 
-// TODO: Return this process's memory utilization
 string Process::Ram() const { return LinuxParser::Ram(pid_); }
 
-// TODO: Return the user (name) that generated this process
 string Process::User() { return LinuxParser::User(pid_); }
 
-// TODO: Return the age of this process (in seconds)
-long int Process::UpTime() { return LinuxParser::UpTime(pid_); }
+long int Process::UpTime() const { return (LinuxParser::UpTime() - LinuxParser::UpTime(pid_)); }
 
-// TODO: Overload the "less than" comparison operator for Process objects
-// REMOVE: [[maybe_unused]] once you define the function
 bool Process::operator<(Process const& a) const {
     //Determining precedence based on process memory utilization
     return this->CpuUtilization() > a.CpuUtilization();
